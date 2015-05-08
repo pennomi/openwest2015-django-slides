@@ -4,6 +4,7 @@
         <script src="reveal.js"></script>
         <link rel="stylesheet" href="reveal.css"/>
         <link rel="stylesheet" href="league.css" id="theme">
+		<link rel="stylesheet" href="lib/css/zenburn.css">
     </head>
     <body>
         <div class="reveal">
@@ -32,51 +33,77 @@
                 <section>
                     <section>
                         <h2>Models</h2>
-                        <ul>
-                            <li class="fragment">Metaclass MAGIC!</li>
-                            <li class="fragment">Multiple Database Backends</li>
-                            <li class="fragment"></li>
-                        </ul>
+						<p>Django's interface with the database</p>
                     </section>
                     <section>
                         <h2>The Django ORM</h2>
                         <ul>
                             <li class="fragment">Translates code to SQL</li>
                             <li class="fragment">Multiple Database Backends</li>
-                            <li class="fragment"></li>
+                            <li class="fragment">Python Metaclass MAGIC!</li>
                         </ul>
                     </section>
+					<section>
+						<h2>Example</h2>
+						<pre><code>
+class Message(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="messages")
+    text = models.CharField(max_length=140)
+    created_at = models.DateTimeField(auto_now_add=True)
+    stars = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="starred_messages", blank=True)
+    tagged_users = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="messages_tagged_in", blank=True)
+    hashtags = models.ManyToManyField(Hashtag, blank=True)
+						</code></pre>
+					</section>
+					<section>
+						<h2>Querysets</h2>
+						<p>Let's explore the power of the ORM in the Django Shell</p>
+					</section>
                     <section>
                         <h2>Migrations</h2>
                         <ul>
-                            <li class="fragment">New in Django 1.7</li>
-                            <li class="fragment">Auto-detects model changes</li>
-                            <li class="fragment">Maintains full history</li>
+                            <li class="fragment">New in Django 1.7 and replaces South</li>
+                            <li class="fragment">Auto-detect model changes</li>
+                            <li class="fragment">Maintain full history</li>
                         </ul>
                     </section>
                 </section>
                 <section>
                     <section>
                         <h2>Views</h2>
-                        <ul>
-                            <li class="fragment">Class-based goodness</li>
-                            <li class="fragment">Common generic views</li>
-                        </ul>
+						<p>Pulling Data into Context</p>
                     </section>
+					<section>
+						<h2></h2>
+                        <ul>
+							<li class="fragment">Use the ORM's Queryset Functionality</li>
+                            <li class="fragment">Function-based views...</li>
+                            <li class="fragment">... or Class-based goodness!</li>
+                            <li class="fragment">Shortcuts for generic views</li>
+                        </ul>
+					</section>
                 </section>
                 <section>
                     <section>
                         <h2>Templates</h2>
+						<p>Making Data Look Good</p>
+					</section>
+					<section>
+						<h2>Template Engine</h2>
                         <ul>
-                            <li class="fragment">The visible part of your site</li>
                             <li class="fragment">Django template language</li>
-                            <li class="fragment">New in Django 1.8: pluggable template engine</li>
+                            <li class="fragment">New in Django 1.8: pluggable engines</li>
+                            <li class="fragment">Populated via the view's context.</li>
                         </ul>
                     </section>
                 </section>
             </div>
         </div>
     </body>
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
     <script>
         Reveal.initialize({
             controls: true,
@@ -102,7 +129,10 @@
             backgroundTransition: 'default',
             viewDistance: 3,
             parallaxBackgroundImage: '',
-            parallaxBackgroundSize: ''
+            parallaxBackgroundSize: '',
+			dependencies: [
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+			]
         });
     </script>
 </html>
