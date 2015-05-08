@@ -4,7 +4,7 @@
         <script src="reveal.js"></script>
         <link rel="stylesheet" href="reveal.css"/>
         <link rel="stylesheet" href="league.css" id="theme">
-		<link rel="stylesheet" href="lib/css/zenburn.css">
+        <link rel="stylesheet" href="lib/css/zenburn.css">
     </head>
     <body>
         <div class="reveal">
@@ -28,12 +28,12 @@
                     </ul>
                 </section>
                 <section>
-                    <h1>Django Concepts</h1>
+                    <h2>Django Concepts</h2>
                 </section>
                 <section>
                     <section>
                         <h2>Models</h2>
-						<p>Django's interface with the database</p>
+                        <p>Django's interface with the database</p>
                     </section>
                     <section>
                         <h2>The Django ORM</h2>
@@ -43,9 +43,9 @@
                             <li class="fragment">Python Metaclass MAGIC!</li>
                         </ul>
                     </section>
-					<section>
-						<h2>Example</h2>
-						<pre><code>
+                    <section>
+                        <h2>Example</h2>
+                        <pre><code>
 class Message(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="messages")
     text = models.CharField(max_length=140)
@@ -55,12 +55,12 @@ class Message(models.Model):
     tagged_users = models.ManyToManyField(
         settings.AUTH_USER_MODEL, related_name="messages_tagged_in", blank=True)
     hashtags = models.ManyToManyField(Hashtag, blank=True)
-						</code></pre>
-					</section>
-					<section>
-						<h2>Querysets</h2>
-						<p>Let's explore the power of the ORM in the Django Shell</p>
-					</section>
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>Querysets</h2>
+                        <p>Let's explore the power of the ORM in the Django Shell</p>
+                    </section>
                     <section>
                         <h2>Migrations</h2>
                         <ul>
@@ -73,37 +73,109 @@ class Message(models.Model):
                 <section>
                     <section>
                         <h2>Views</h2>
-						<p>Pulling Data into Context</p>
+                        <p>Pulling Data into Context</p>
                     </section>
-					<section>
-						<h2></h2>
+                    <section>
+                        <h2>Views</h2>
                         <ul>
-							<li class="fragment">Use the ORM's Queryset Functionality</li>
+                            <li class="fragment">Use the ORM's Queryset Functionality</li>
                             <li class="fragment">Function-based views...</li>
                             <li class="fragment">... or Class-based goodness!</li>
                             <li class="fragment">Shortcuts for generic views</li>
                         </ul>
-					</section>
+                    </section>
+                    <section>
+                        <h2>Example</h2>
+                        <pre><code>
+class MessageList(ListView):
+    template_name = "message_list.html"
+    model = Message
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        hashtag = self.request.GET.get('hashtag')
+        if hashtag:
+            queryset = queryset.filter(hashtags__text=hashtag)
+        return queryset
+                        </code></pre>
+                    </section>
+                    <section>
+                        <h2>The URL Router</h2>
+                        <ul>
+                            <li class="fragment">Regular Expression-based</li>
+                            <li class="fragment">Allow for composition of several views files</li>
+                        </ul>
+                        <pre class="fragment"><code>
+urlpatterns = [
+    url(r'^my-messages/$', MyMessageList.as_view(), name="my-messages"),
+    url(r'^messages/(?P&lt;username>\w+)/$', FilteredMessageList.as_view(), name="user-messages"),
+    url(r'^new/$', login_required(CreateMessage.as_view())),
+    url(r'^api/', include(router.urls))
+]
+                        </code></pre>
+                    </section>
                 </section>
                 <section>
                     <section>
                         <h2>Templates</h2>
-						<p>Making Data Look Good</p>
-					</section>
-					<section>
-						<h2>Template Engine</h2>
+                        <p>Making Data Look Good</p>
+                    </section>
+                    <section>
+                        <h2>Template Engine</h2>
                         <ul>
                             <li class="fragment">Django template language</li>
                             <li class="fragment">New in Django 1.8: pluggable engines</li>
                             <li class="fragment">Populated via the view's context.</li>
+                            <li class="fragment">Easy for a Web Designer to Grok</li>
                         </ul>
                     </section>
+                    <section>
+                        <h2>Example</h2>
+                        <pre><code>
+{% extends "template_base.html" %}
+{% load staticfiles %}
+
+{% block body %}
+<div>
+  {% for message in object_list %}
+    <p>
+      {{ message.text }}
+    </p>
+    <p><strong><a href="{% url 'user-messages' message.user %}">{{ message.user }}</a></strong> <em>{{ message.created_at | date }} {{ message.created_at | time }}</em></p>
+
+    <p>
+      <strong>Tags:</strong>
+      {% for tag in message.hashtags.all %} <a href="?hashtag={{ tag }}">{{ tag }}</a> {% endfor %}
+    </p>
+    <p>
+      <strong>Mentions:</strong>
+      {% for user in message.tagged_users.all %} <a href="{% url 'user-messages' user %}">{{ user.username }}</a> {% endfor %}
+    </p>
+    <hr>
+  {% empty %}
+    <h3>These are not the messages you are looking for.</h3>
+    <img src="{% static 'img/droids.jpg' %}" />
+  {% endfor %}
+</div>
+{% endblock %}
+                        </code></pre>
+                    </section>
+                </section>
+                <section>
+                    <h2>Wrap it all together</h2>
+                    <p>Get started with Django by completing the Tutorial</p>
+                    <p><a>https://docs.djangoproject.com/en/1.8/intro/tutorial01/</a></p>
+                    <p>(Seriously. It's awesome.)</p>
+                </section>
+                <section>
+                    <h3>Stay awhile, and listen!</h3>
+                    <p>We've got oodles more going on for the rest of the conference!</p>
                 </section>
             </div>
         </div>
     </body>
-	<script src="lib/js/head.min.js"></script>
-	<script src="js/reveal.js"></script>
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
     <script>
         Reveal.initialize({
             controls: true,
@@ -130,9 +202,9 @@ class Message(models.Model):
             viewDistance: 3,
             parallaxBackgroundImage: '',
             parallaxBackgroundSize: '',
-			dependencies: [
-				{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
-			]
+            dependencies: [
+                { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            ]
         });
     </script>
 </html>
